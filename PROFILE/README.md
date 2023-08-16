@@ -7,7 +7,7 @@ To find out more, check out these links, or get in touch by emailing the Investe
 
 ## NB Community Links  :tent:
 
-- [API Docs]([https://developerbeta.investec.com/za/home](https://developer.investec.com/))
+- [API Docs](https://developer.investec.com/)
 - [Community Wiki](https://offerzen.gitbook.io/programmable-banking-community-wiki/)
 - [Programamble Banking Roadmap & Suggestions](https://programmable-banking-community.canny.io/)
 - [Blog Posts](https://www.offerzen.com/blog#stq=Programmable%20Banking%20Community&stp=1)
