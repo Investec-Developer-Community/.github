@@ -1,0 +1,6 @@
+## Issue priorities
+
+- **Critical**: usually block an entire system’s or module’s functionality, and testing cannot proceed further without such a defect being fixed. An example of a critical defect is an application’s returning a server error message after a login attempt.
+- **High:** affect key functionality of an application, and the app behaves in a way that is strongly different from the one stated in the requirements, for instance, an email service provider does not allow adding more than one email address to the recipient field.
+- **Medium:** are identified in case a minor function does not behave in a way stated in the requirements. An example of such a defect is a broken link in an application’s Terms and Requirements section.
+- **Low:** primarily related to an application’s UI and may include such an example as a slightly different size or color of a button.
