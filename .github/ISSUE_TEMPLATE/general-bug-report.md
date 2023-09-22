@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **How bad**
-Level: Critical/High/Medium/Low [see issue priorities](.github/ISSUE_TEMPLATE/issue-priorities)
+Level: Critical/High/Medium/Low [see issue priorities](https://github.com/Investec-Developer-Community/.github/blob/main/.github/ISSUE_TEMPLATE/issue-priorities)
 
 **Describe the bug**
 [Provide a clear and concise description of the bug]
