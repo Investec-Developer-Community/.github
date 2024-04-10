@@ -9,6 +9,8 @@ To find out more, check out these links, or get in touch by emailing the Investe
 
 - [API Docs](https://developer.investec.com/)
 - [Community Wiki](https://offerzen.gitbook.io/programmable-banking-community-wiki/)
-- [Programmable Banking Roadmap & Suggestions](https://programmable-banking-community.canny.io/)
-- [Blog Posts](https://www.offerzen.com/blog#stq=Programmable%20Banking%20Community&stp=1)
-- [Programmable Businesses Banking use cases](https://docs.google.com/presentation/d/e/2PACX-1vQJFvudepzE4DhSiISyx7TcWdu0R35bCwsRbcVjkvLziy5JLRwfWT3vnMNds7wcCmBxBye021zj7rIv/pub?start=false&loop=false&delayms=3000&slide=id.g91f766fb9b_0_1278)
+- [Feature Requests and Discussions](https://github.com/orgs/Investec-Developer-Community/discussions)
+- [Raise a production issue](https://github.com/Investec-Developer-Community/.github/issues)
+- [Programmable Businesses Banking use cases](https://investec.gitbook.io/programmable-banking-community-wiki/get-building/use-cases)
+- [Join the Comunity](https://jf18emj1p49.typeform.com/to/RXy7DHSD)
+- [Community Champions Programme](https://investec.gitbook.io/programmable-banking-community-wiki/community/community-champions)
