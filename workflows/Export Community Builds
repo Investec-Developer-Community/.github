@@ -1,0 +1,27 @@
+name: Export Community Builds
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Every hour (or change as needed)
+  workflow_dispatch:
+  issues:
+    types: [opened, closed, labeled, unlabeled, edited]
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Export Issues to builds.json
+        uses: peter-evans/issues-to-json@v2
+        with:
+          labels: 'New Community Build'
+          state: open
+          output-file: './docs/builds.json'
+
+      - name: Commit and push
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'docs/builds.json'
+          message: 'Update builds.json from issues'
