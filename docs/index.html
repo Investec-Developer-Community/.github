@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Investec Developer Community Builds</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --accent: #003B71;
+      --secondary: #e3e9f2;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--secondary);
+      margin: 0; padding: 0;
+      color: #222;
+    }
+    header {
+      background: var(--accent);
+      color: #fff;
+      padding: 2em 1em 1.5em 1em;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0 0 0.3em 0;
+      font-size: 2.3em;
+      letter-spacing: -2px;
+    }
+    header p {
+      margin: 0;
+      font-size: 1.1em;
+      opacity: 0.88;
+    }
+    .cta {
+      margin-top: 1.2em;
+      display: inline-block;
+      background: #fff;
+      color: var(--accent);
+      padding: 0.5em 1.2em;
+      border-radius: 32px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 2px 12px #0001;
+      transition: background 0.15s, color 0.15s;
+    }
+    .cta:hover {
+      background: var(--secondary);
+      color: #222;
+    }
+    main {
+      max-width: 900px;
+      margin: 2em auto;
+      padding: 0 1em;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5em;
+    }
+    .build {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 18px #003B7120;
+      padding: 1.2em 1em 1.2em 1.1em;
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+      transition: box-shadow 0.18s;
+    }
+    .build:hover {
+      box-shadow: 0 4px 24px #003B7133;
+    }
+    .build-title {
+      font-size: 1.17em;
+      font-weight: bold;
+      color: var(--accent);
+      margin-bottom: 0.4em;
+      letter-spacing: -1px;
+    }
+    .meta {
+      color: #666;
+      font-size: 0.97em;
+      margin-bottom: 0.5em;
+    }
+    .desc {
+      margin: 0.6em 0 0.8em 0;
+      font-size: 1em;
+      flex-grow: 1;
+    }
+    .links {
+      margin-top: 0.3em;
+      font-size: 0.97em;
+    }
+    .links a {
+      color: var(--accent);
+      margin-right: 1.1em;
+      text-decoration: underline;
+    }
+    .badge {
+      display: inline-block;
+      background: #d5ecff;
+      color: var(--accent);
+      padding: 0.25em 0.85em;
+      border-radius: 16px;
+      font-size: 0.87em;
+      margin-right: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.3em; }
+      main { padding: 0 0.3em; }
+      .build { padding: 1em 0.7em; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🚀 Investec Developer Community Builds</h1>
+    <p>
+      Discover and celebrate what our devs are building with Investec APIs.<br>
+      <strong>Have something to share?</strong>
+      <a class="cta" href="https://github.com/Investec-Developer-Community/YOUR-REPO/issues/new?template=build-submission.yml" target="_blank">
+        Submit your build →
+      </a>
+    </p>
+  </header>
+  <main>
+    <section id="gallery">
+      <div style="text-align:center;color:#888;font-size:1.1em;">Loading builds…</div>
+    </section>
+  </main>
+  <script>
+    // Utility to extract possible links from markdown
+    function extractLinks(text) {
+      if (!text) return [];
+      const urlRegex = /(https?:\/\/[^\s\)\]]+)/g;
+      const matches = text.match(urlRegex) || [];
+      return matches.filter(url =>
+        !url.includes('github.com/Investec-Developer-Community') // skip self-links
+      );
+    }
+    // Utility to extract images
+    function extractImage(text) {
+      if (!text) return null;
+      // ![](url) or direct image link
+      const mdImg = text.match(/!\[.*?\]\((https?:\/\/.*?)\)/);
+      if (mdImg) return mdImg[1];
+      const urlImg = text.match(/(https?:\/\/\S+\.(png|jpe?g|gif))/i);
+      if (urlImg) return urlImg[1];
+      return null;
+    }
+
+    fetch('builds.json')
+      .then(res => res.json())
+      .then(data => {
+        const gallery = document.getElementById('gallery');
+        if (!data || !data.issues || data.issues.length === 0) {
+          gallery.innerHTML = '<div style="text-align:center;color:#bbb;font-size:1.15em;">No builds submitted yet. Be the first!</div>';
+          return;
+        }
+        // Show newest first
+        const builds = data.issues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        gallery.innerHTML = `<div class="grid">${
+          builds.map(issue => {
+            const title = issue.title.replace('[Build Submission]', '').trim();
+            const user = issue.user.login;
+            const url = issue.html_url;
+            const date = new Date(issue.created_at).toLocaleDateString();
+            const desc = (issue.body || '').split('\n').slice(0, 7).join(' ').slice(0, 340);
+            const img = extractImage(issue.body);
+            const links = extractLinks(issue.body);
+            const labels = (issue.labels || []).filter(l => l.name !== 'submission').map(l => l.name);
+
+            return `
+              <div class="build">
+                <div class="build-title">${title || "Untitled Build"}</div>
+                <div class="meta">
+                  <span title="GitHub user">@${user}</span>
+                  <span> • </span>
+                  <span>${date}</span>
+                  ${labels.map(lbl => `<span class="badge">${lbl}</span>`).join('')}
+                </div>
+                ${img ? `<img src="${img}" alt="Build screenshot" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-bottom:0.7em;">` : ''}
+                <div class="desc">${desc || "<em>No description provided.</em>"}</div>
+                <div class="links">
+                  <a href="${url}" target="_blank">View Submission</a>
+                  ${links.slice(0,3).map(link =>
+                    `<a href="${link}" target="_blank">${link.includes('github.com') ? 'Repo' : 'Demo'}</a>`
+                  ).join('')}
+                </div>
+              </div>
+            `;
+          }).join('')
+        }</div>`;
+      })
+      .catch(err => {
+        document.getElementById('gallery').innerHTML =
+          '<div style="text-align:center;color:#bbb;">Could not load builds. Please check back later.</div>';
+      });
+  </script>
+</body>
+</html>
