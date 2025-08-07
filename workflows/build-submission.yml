@@ -24,5 +24,3 @@ jobs:
               repo: context.repo.repo,
               body: "Thanks for submitting your build! 🚀 The community will review and share feedback soon.\n\nIf you want this featured in the next newsletter, let us know!"
             })
-
-      # OPTIONAL: Post to Slack, Discord, or update a gallery (extend here)
