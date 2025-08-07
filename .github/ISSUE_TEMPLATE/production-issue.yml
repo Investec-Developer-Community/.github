@@ -1,0 +1,82 @@
+name: "🚨 Production issues"
+description: Issues affecting daily operations; requires urgent attention.
+title: "[PRODUCTION ISSUE] A short description here."
+labels: [bug, help wanted]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please complete this form for anything affecting daily operations.
+        - **Level:** [see issue priorities](https://github.com/Investec-Developer-Community/.github/blob/main/.github/ISSUE_TEMPLATE/issue-priorities)
+  - type: dropdown
+    id: level
+    attributes:
+      label: Level
+      description: How severe is this issue?
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+  - type: dropdown
+    id: urgent
+    attributes:
+      label: Urgent
+      description: Is this issue urgent?
+      options:
+        - Yes
+        - No
+    validations:
+      required: true
+  - type: input
+    id: time_reported
+    attributes:
+      label: Time reported
+      description: Enter the date and time the issue was reported.
+      placeholder: Jan 00, 2022, 00:00 AM
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the issue
+      description: Provide a clear and concise description of the issue.
+      placeholder: e.g. The API returns a 500 error in production.
+    validations:
+      required: true
+  - type: textarea
+    id: why_production
+    attributes:
+      label: Why do you think it’s a production incident?
+      description: Does this directly affect daily operations? Explain.
+      placeholder: e.g. All clients are blocked from transacting.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What did you expect to happen?
+      placeholder: e.g. Users should be able to process payments as normal.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What actually happened?
+      placeholder: e.g. Payment attempts return an error code.
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Any other details or context you'd like to provide (screenshots, logs, GIFs, etc.)
+      placeholder: Add any other context, screenshots, error logs, or GIFs here.
+    validations:
+      required: false
