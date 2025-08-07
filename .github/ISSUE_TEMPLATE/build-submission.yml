@@ -1,0 +1,68 @@
+name: 🚀 Build Submission
+description: Submit your project/build to the Investec Developer Community
+title: "[Build Submission] <Project Name>"
+labels: [submission, review-needed]
+assignees: ["@nick.benson"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing your build! Please fill out the details below so we can showcase your work.
+  - type: input
+    id: project_name
+    attributes:
+      label: Project Name
+      placeholder: e.g. Programmable Banking Dashboard
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Your Name or Team
+      placeholder: e.g. Jane Doe or Team BuildR
+    validations:
+      required: true
+  - type: input
+    id: repo_link
+    attributes:
+      label: Repository/Code Link
+      placeholder: https://github.com/yourname/yourproject
+    validations:
+      required: false
+  - type: input
+    id: live_demo
+    attributes:
+      label: Live Demo (if any)
+      placeholder: https://your-demo-site.com
+    validations:
+      required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What does your build do? What's the problem/solution/benefit of this build? Any standout features?
+      placeholder: Tell us about your project...
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or GIFs
+      description: Paste image links (drag-and-drop images works too)
+    validations:
+      required: false
+  - type: textarea
+    id: instructions
+    attributes:
+      label: How to Run/Use It
+      description: Give us quickstart instructions if relevant
+      placeholder: e.g. `npm install && npm run dev`
+    validations:
+      required: false
+  - type: checkboxes
+    id: agree
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow the Investec Developer Community Code of Conduct
+          required: true
