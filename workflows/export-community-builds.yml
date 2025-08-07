@@ -16,7 +16,7 @@ jobs:
       - name: Export Issues to builds.json
         uses: peter-evans/issues-to-json@v2
         with:
-          labels: 'New Community Build,showcase'
+          labels-include: 'New Community Build,showcase'
           state: open
           output-file: './docs/builds.json'
 
