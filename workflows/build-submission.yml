@@ -9,10 +9,10 @@ jobs:
     if: contains(github.event.issue.title, '[Build Submission]')
     runs-on: ubuntu-latest
     steps:
-      - name: Add 'showcase' label
+      - name: Add 'showcase' and 'New Community Build' labels
         uses: actions-ecosystem/action-add-labels@v1
         with:
-          labels: showcase
+          labels: showcase, "New Community Build"
 
       - name: Comment on submission
         uses: actions/github-script@v7
