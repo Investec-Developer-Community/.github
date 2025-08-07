@@ -2,11 +2,18 @@ name: Handle Build Submissions
 
 on:
   issues:
-    types: [opened]
+    types: [opened, labeled]
 
 jobs:
   handle-submission:
-    if: contains(github.event.issue.title, '[Build Submission]')
+    # This runs when:
+    # - The issue is opened and the title includes [Build Submission]
+    # - OR a label is added and it's 'New Community Build' or 'showcase'
+    if: |
+      (github.event.action == 'opened' && contains(github.event.issue.title, '[Build Submission]')) ||
+      (github.event.action == 'labeled' && 
+        (github.event.label.name == 'New Community Build' || github.event.label.name == 'showcase')
+      )
     runs-on: ubuntu-latest
     steps:
       - name: Add 'showcase' and 'New Community Build' labels
