@@ -28,8 +28,8 @@ body:
       label: Urgent
       description: Is this issue urgent?
       options:
-        - Yes
-        - No
+        - "Yes"
+        - "No"
     validations:
       required: true
   - type: input
