@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: sans-serif;
-      max-width: 960px;
+      max-width: 1200px;
       margin: 40px auto;
       padding: 0 20px;
       background: #f9f9f9;
@@ -20,8 +20,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1em;
       flex-wrap: wrap;
+      gap: 10px;
     }
     .submit-button {
       background: #005691;
@@ -41,14 +41,23 @@
       border-radius: 6px;
       width: 100%;
       max-width: 300px;
-      margin-top: 10px;
+      margin: 20px 0;
+    }
+    #builds {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media(min-width: 768px) {
+      #builds {
+        grid-template-columns: 1fr 1fr;
+      }
     }
     .build-card {
       background: #fff;
       border: 1px solid #ddd;
       border-left: 6px solid #005691;
       padding: 20px;
-      margin-bottom: 20px;
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
@@ -62,6 +71,21 @@
       color: #666;
       font-size: 0.9em;
     }
+    .screenshots img {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 4px;
+      border: 1px solid #eee;
+    }
+    .copy-btn {
+      background: #eee;
+      font-size: 0.9em;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
     a {
       color: #005691;
       text-decoration: none;
@@ -69,14 +93,19 @@
     a:hover {
       text-decoration: underline;
     }
-    .screenshots img {
-      max-width: 100%;
-      margin-top: 10px;
-      border-radius: 4px;
-      border: 1px solid #eee;
-    }
     .loading {
       font-style: italic;
+    }
+    .top-link {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #005691;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9em;
     }
   </style>
 </head>
@@ -90,6 +119,7 @@
   <input id="search" type="text" placeholder="Search builds..." />
 
   <div id="builds"><p class="loading">Loading builds...</p></div>
+  <a href="#" class="top-link">⬆️ Back to top</a>
 
   <script>
     const owner = "Investec-Developer-Community";
@@ -98,9 +128,13 @@
     let allIssues = [];
 
     const extractSection = (body, label) => {
-      const regex = new RegExp(`###\\s*${label}\\s*\\n([\\s\\S]*?)(?=\\n###|$)`, "i");
+      const regex = new RegExp(`###\s*${label}\s*\n([\s\S]*?)(?=\n###|$)`, "i");
       const match = body.match(regex);
       return match ? match[1].trim() : "";
+    };
+
+    const copyToClipboard = (text) => {
+      navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
     };
 
     const renderBuilds = (issues) => {
@@ -122,16 +156,44 @@
         const liveDemo = extractSection(body, "Live Demo (if any)");
         const instructions = extractSection(body, "How to Run/Use It");
         const screenshots = extractSection(body, "Screenshots or GIFs");
-
-        // Parse image URLs from screenshots textarea
         const imageUrls = (screenshots.match(/https?:\/\/\S+\.(?:png|jpg|jpeg|gif)/gi) || []);
+        const createdAt = new Date(issue.created_at).toLocaleDateString();
 
         const card = document.createElement("div");
         card.className = "build-card";
         card.innerHTML = `
           <h2>${projectName}</h2>
           <p><strong>Submitted by:</strong> ${author}</p>
+          <p class="meta">🕒 Submitted on ${createdAt}</p>
           ${description ? `<p>${description}</p>` : ""}
           ${repoLink ? `<p>📦 <a href="${repoLink}" target="_blank">View Repository</a></p>` : ""}
           ${liveDemo ? `<p>🚀 <a href="${liveDemo}" target="_blank">Live Demo</a></p>` : ""}
-          ${instructions ? `<p><strong>How to Run:</strong><br><code>${instruc
+          ${instructions ? `<p><strong>How to Run:</strong><br><code>${instructions}</code><button class="copy-btn" onclick="copyToClipboard(\`${instructions}\`)">📋 Copy</button></p>` : ""}
+          ${imageUrls.length ? `<div class="screenshots">${imageUrls.map(url => `<img src="${url}" alt="screenshot">`).join("")}</div>` : ""}
+          <p class="meta">📝 <a href="${issue.html_url}" target="_blank">View Submission</a></p>
+        `;
+        container.appendChild(card);
+      });
+    };
+
+    async function loadBuilds() {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(label)}&state=open`);
+      const issues = await res.json();
+      allIssues = issues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      renderBuilds(allIssues);
+    }
+
+    document.getElementById("search").addEventListener("input", e => {
+      const q = e.target.value.toLowerCase();
+      const filtered = allIssues.filter(issue => {
+        const body = issue.body.toLowerCase();
+        const title = issue.title.toLowerCase();
+        return title.includes(q) || body.includes(q);
+      });
+      renderBuilds(filtered);
+    });
+
+    loadBuilds();
+  </script>
+</body>
+</html>
