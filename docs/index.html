@@ -142,55 +142,39 @@
   <a href="#" class="top-link">↑</a>
 
   <script>
-    let allIssues = [];
-
-    const extractSection = (body, label) => {
-      const regex = new RegExp(`###\s*${label}\s*\n+([\s\S]*?)(?=\n###|$)`, "i");
-      const match = body.match(regex);
-      return match ? match[1].trim() : "";
-    };
+    let allBuilds = [];
 
     const copyToClipboard = (text) => {
       navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
     };
 
-    const renderBuilds = (issues) => {
+    const renderBuilds = (builds) => {
       const container = document.getElementById("builds");
       container.innerHTML = "";
 
-      if (!issues.length) {
+      if (!builds.length) {
         container.innerHTML = "<p>No matching builds found.</p>";
         return;
       }
 
-      issues.forEach(issue => {
-        const body = issue.body || "";
-
-        const projectName = extractSection(body, "Project Name") || issue.title;
-        const author = extractSection(body, "Your Name or Team") || issue.user.login;
-        const description = extractSection(body, "Description");
-        const repoLink = extractSection(body, "Repository/Code Link");
-        const liveDemo = extractSection(body, "Live Demo (if any)");
-        const instructions = extractSection(body, "How to Run/Use It");
-        const screenshots = extractSection(body, "Screenshots or GIFs");
-        const imageUrls = (screenshots.match(/https?:\/\/\S+\.(png|jpg|jpeg|gif)/gi) || []);
-        const createdAt = new Date(issue.created_at).toLocaleDateString();
+      builds.forEach(build => {
         const placeholderImage = 'https://placehold.co/600x400?text=No+Screenshot';
+        const createdAt = new Date(build.created_at).toLocaleDateString();
 
         const card = document.createElement("div");
         card.className = "build-card";
         card.innerHTML = `
-          <h2>${projectName}</h2>
-          <p><strong>Submitted by:</strong> ${author}</p>
+          <h2>${build.projectName || build.title}</h2>
+          <p><strong>Submitted by:</strong> ${build.author || build.submitter}</p>
           <p class="meta">🕒 Submitted on ${createdAt}</p>
-          ${description ? `<p>${description}</p>` : "<p><em>No description provided.</em></p>"}
+          ${build.description ? `<p>${build.description}</p>` : "<p><em>No description provided.</em></p>"}
           <div class="screenshots">
-            <img src="${imageUrls[0] || placeholderImage}" alt="Build Screenshot">
+            <img src="${(build.screenshots && build.screenshots[0]) || placeholderImage}" alt="Build Screenshot">
           </div>
-          ${repoLink ? `<p>📦 <a href="${repoLink}" target="_blank">View Repository</a></p>` : ""}
-          ${liveDemo && liveDemo.toLowerCase() !== "no response" ? `<p>🚀 <a href="${liveDemo}" target="_blank">Live Demo</a></p>` : ""}
-          ${instructions ? `<p><strong>How to Run:</strong><br><code>${instructions}</code><button class="copy-btn" onclick="copyToClipboard(\`${instructions}\`)">📋 Copy</button></p>` : ""}
-          <p class="meta">📝 <a href="${issue.html_url}" target="_blank">View Submission</a></p>
+          ${build.repoLink ? `<p>📦 <a href="${build.repoLink}" target="_blank">View Repository</a></p>` : ""}
+          ${build.liveDemo ? `<p>🚀 <a href="${build.liveDemo}" target="_blank">Live Demo</a></p>` : ""}
+          ${build.instructions ? `<p><strong>How to Run:</strong><br><code>${build.instructions}</code><button class="copy-btn" onclick="copyToClipboard(\`${build.instructions}\`)">📋 Copy</button></p>` : ""}
+          <p class="meta">📝 <a href="${build.url}" target="_blank">View Submission</a></p>
         `;
         container.appendChild(card);
       });
@@ -200,25 +184,3 @@
       try {
         const res = await fetch("./builds.json");
         if (!res.ok) throw new Error("Failed to load builds.json");
-        const issues = await res.json();
-        allIssues = issues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        renderBuilds(allIssues);
-      } catch (err) {
-        document.getElementById("builds").innerHTML = `<p>⚠️ Error loading builds: ${err.message}</p>`;
-      }
-    }
-
-    document.getElementById("search").addEventListener("input", e => {
-      const q = e.target.value.toLowerCase();
-      const filtered = allIssues.filter(issue => {
-        const body = issue.body.toLowerCase();
-        const title = issue.title.toLowerCase();
-        return title.includes(q) || body.includes(q);
-      });
-      renderBuilds(filtered);
-    });
-
-    loadBuilds();
-  </script>
-</body>
-</html>
