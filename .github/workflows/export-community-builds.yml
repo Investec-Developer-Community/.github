@@ -13,8 +13,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      # Ensure jq is installed (usually old version)
       - name: Install jq
         run: sudo apt-get install -y jq
+
+      # Upgrade to jq 1.6 for advanced regex and match() support
+      - name: Install jq 1.6
+        run: |
+          sudo wget -O /usr/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+          sudo chmod +x /usr/bin/jq
+          jq --version
 
       - name: Fetch issues from GitHub
         env:
@@ -42,14 +50,13 @@ jobs:
             description: (.body | match("(?s)### Description\\s+([\\s\\S]*?)(?=\\n###|$)")?.captures[0].string),
             instructions: (.body | match("(?s)### How to Run/Use It\\s+([\\s\\S]*?)(?=\\n###|$)")?.captures[0].string),
             screenshots: (
-              (.body | match("(?s)### Screenshots or GIFs\\s+([\\s\\S]*?)(?=\\n###|$)")?.captures[0].string // \"\")
-              | scan(\"https?://\\\\S+\\\\.(png|jpg|jpeg|gif)\")
+              (.body | match("(?s)### Screenshots or GIFs\\s+([\\s\\S]*?)(?=\\n###|$)")?.captures[0].string // "")
+              | scan("https?://\\S+\\.(png|jpg|jpeg|gif)")
             )
           })
           EOF
 
           jq -f enrich.jq raw_issues.json > docs/builds.json
-
 
       - name: Commit builds.json
         run: |
