@@ -122,9 +122,6 @@
   <a href="#" class="top-link">⬆️ Back to top</a>
 
   <script>
-    const owner = "Investec-Developer-Community";
-    const repo = ".github";
-    const label = "New Community Build";
     let allIssues = [];
 
     const extractSection = (body, label) => {
@@ -177,10 +174,15 @@
     };
 
     async function loadBuilds() {
-      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(label)}&state=open`);
-      const issues = await res.json();
-      allIssues = issues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      renderBuilds(allIssues);
+      try {
+        const res = await fetch("./builds.json");
+        if (!res.ok) throw new Error("Failed to load builds.json");
+        const issues = await res.json();
+        allIssues = issues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        renderBuilds(allIssues);
+      } catch (err) {
+        document.getElementById("builds").innerHTML = `<p>⚠️ Error loading builds: ${err.message}</p>`;
+      }
     }
 
     document.getElementById("search").addEventListener("input", e => {
