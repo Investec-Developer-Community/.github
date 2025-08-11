@@ -1,5 +1,8 @@
 name: Export Community Builds
 
+permissions:
+  contents: write
+  
 on:
   issues:
     types: [labeled]
