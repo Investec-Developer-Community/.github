@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Investec Community Builds</title>
+  <meta charset="UTF-8" />
+  <title>Investec Developer Community Builds</title>
   <style>
     body {
       font-family: sans-serif;
@@ -10,10 +10,38 @@
       margin: 40px auto;
       padding: 0 20px;
       background: #f9f9f9;
+      color: #222;
     }
     h1 {
       font-size: 2em;
-      margin-bottom: 0.5em;
+      margin-bottom: 0.3em;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1em;
+      flex-wrap: wrap;
+    }
+    .submit-button {
+      background: #005691;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .submit-button:hover {
+      background: #00406e;
+    }
+    #search {
+      padding: 8px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 10px;
     }
     .build-card {
       background: #fff;
@@ -28,7 +56,7 @@
       margin: 0 0 0.5em;
     }
     .build-card p {
-      margin: 0.3em 0;
+      margin: 0.5em 0;
     }
     .meta {
       color: #666;
@@ -41,48 +69,62 @@
     a:hover {
       text-decoration: underline;
     }
+    .screenshots img {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 4px;
+      border: 1px solid #eee;
+    }
     .loading {
       font-style: italic;
     }
   </style>
 </head>
 <body>
-  <h1>🚀 Investec Developer Community Builds</h1>
-  <p>Explore community-submitted projects. Built by devs, for devs.</p>
+  <div class="top-bar">
+    <h1>🚀 Investec Developer Community Builds</h1>
+    <a class="submit-button" href="https://github.com/Investec-Developer-Community/.github/issues/new?template=build-submission.yml" target="_blank">
+      Submit Your Build
+    </a>
+  </div>
+  <input id="search" type="text" placeholder="Search builds..." />
 
   <div id="builds"><p class="loading">Loading builds...</p></div>
 
   <script>
-    const owner = "Investec-Developer-Community"; // replace with your org if different
-    const repo = ".github"; // replace with your repo name
+    const owner = "Investec-Developer-Community";
+    const repo = ".github";
     const label = "New Community Build";
+    let allIssues = [];
 
-    async function loadBuilds() {
-      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(label)}&state=open`);
-      const issues = await res.json();
+    const extractSection = (body, label) => {
+      const regex = new RegExp(`###\\s*${label}\\s*\\n([\\s\\S]*?)(?=\\n###|$)`, "i");
+      const match = body.match(regex);
+      return match ? match[1].trim() : "";
+    };
+
+    const renderBuilds = (issues) => {
       const container = document.getElementById("builds");
       container.innerHTML = "";
 
       if (!issues.length) {
-        container.innerHTML = "<p>No community builds yet. Be the first!</p>";
+        container.innerHTML = "<p>No matching builds found.</p>";
         return;
       }
 
       issues.forEach(issue => {
         const body = issue.body || "";
 
-        const extractSection = (label) => {
-          const regex = new RegExp(`###\\s*${label}\\s*\\n([\\s\\S]*?)(?=\\n###|$)`, "i");
-          const match = body.match(regex);
-          return match ? match[1].trim() : "";
-        };
+        const projectName = extractSection(body, "Project Name") || issue.title;
+        const author = extractSection(body, "Your Name or Team") || issue.user.login;
+        const description = extractSection(body, "Description");
+        const repoLink = extractSection(body, "Repository/Code Link");
+        const liveDemo = extractSection(body, "Live Demo (if any)");
+        const instructions = extractSection(body, "How to Run/Use It");
+        const screenshots = extractSection(body, "Screenshots or GIFs");
 
-        const projectName = extractSection("Project Name") || issue.title;
-        const author = extractSection("Your Name or Team") || issue.user.login;
-        const description = extractSection("Description");
-        const repoLink = extractSection("Repository/Code Link");
-        const liveDemo = extractSection("Live Demo (if any)");
-        const instructions = extractSection("How to Run/Use It");
+        // Parse image URLs from screenshots textarea
+        const imageUrls = (screenshots.match(/https?:\/\/\S+\.(?:png|jpg|jpeg|gif)/gi) || []);
 
         const card = document.createElement("div");
         card.className = "build-card";
@@ -92,14 +134,4 @@
           ${description ? `<p>${description}</p>` : ""}
           ${repoLink ? `<p>📦 <a href="${repoLink}" target="_blank">View Repository</a></p>` : ""}
           ${liveDemo ? `<p>🚀 <a href="${liveDemo}" target="_blank">Live Demo</a></p>` : ""}
-          ${instructions ? `<p><strong>How to Run:</strong><br><code>${instructions}</code></p>` : ""}
-          <p class="meta">📝 <a href="${issue.html_url}" target="_blank">View Submission</a></p>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    loadBuilds();
-  </script>
-</body>
-</html>
+          ${instructions ? `<p><strong>How to Run:</strong><br><code>${instruc
