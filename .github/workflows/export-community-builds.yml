@@ -39,7 +39,7 @@ jobs:
 
           function extractImageLinks(text) {
             if (!text) return [];
-            return Array.from(text.matchAll(/https?:\\/\\/\\S+\\.(?:png|jpg|jpeg|gif)/gi)).map(m => m[0]);
+            return Array.from(text.matchAll(/https?:\/\/\S+\.(?:png|jpg|jpeg|gif)/gi)).map(m => m[0]);
           }
 
           const builds = issues.map(issue => {
