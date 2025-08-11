@@ -35,20 +35,21 @@ jobs:
             created_at: .created_at,
             submitter: .user.login,
             body: .body,
-            projectName: (.body | capture("(?s)### Project Name\\s+(?<val>.*?)\\r?\\n")?.val // .title),
-            author: (.body | capture("(?s)### Your Name or Team\\s+(?<val>.*?)\\r?\\n")?.val // .user.login),
-            repoLink: (.body | capture("(?s)### Repository/Code Link\\s+(?<val>https?://\\S+)")?.val),
-            liveDemo: (.body | capture("(?s)### Live Demo.*?\\s+(?<val>https?://\\S+)")?.val),
-            description: (.body | capture("(?s)### Description\\s+(?<val>.*?)\\n###")?.val),
-            instructions: (.body | capture("(?s)### How to Run/Use It\\s+(?<val>.*?)\\n###")?.val),
+            projectName: (.body | match("(?s)### Project Name\\s+(.+?)\\r?\\n")?.captures[0].string // .title),
+            author: (.body | match("(?s)### Your Name or Team\\s+(.+?)\\r?\\n")?.captures[0].string // .user.login),
+            repoLink: (.body | match("(?s)### Repository/Code Link\\s+(https?://\\S+)")?.captures[0].string),
+            liveDemo: (.body | match("(?s)### Live Demo.*?\\s+(https?://\\S+)")?.captures[0].string),
+            description: (.body | match("(?s)### Description\\s+([\\s\\S]*?)(?=\\n###|$)")?.captures[0].string),
+            instructions: (.body | match("(?s)### How to Run/Use It\\s+([\\s\\S]*?)(?=\\n###|$)")?.captures[0].string),
             screenshots: (
-              (.body | capture("(?s)### Screenshots or GIFs\\s+(?<val>.*?)\\n###")?.val // "")
-              | scan("https?://\\S+\\.(png|jpg|jpeg|gif)")
+              (.body | match("(?s)### Screenshots or GIFs\\s+([\\s\\S]*?)(?=\\n###|$)")?.captures[0].string // \"\")
+              | scan(\"https?://\\\\S+\\\\.(png|jpg|jpeg|gif)\")
             )
           })
           EOF
 
           jq -f enrich.jq raw_issues.json > docs/builds.json
+
 
       - name: Commit builds.json
         run: |
