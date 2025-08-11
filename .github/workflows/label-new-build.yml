@@ -1,0 +1,17 @@
+name: Auto-label New Community Build
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  tag-new-community-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if it's a build submission
+        if: startsWith(github.event.issue.title, '[Build Submission]')
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: |
+            New Community Build
