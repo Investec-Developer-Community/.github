@@ -2,7 +2,7 @@ name: Export Community Builds to JSON
 
 on:
   schedule:
-    - cron: '0 * * * *' # hourly
+    - cron: '0 * * * *'  # hourly
   workflow_dispatch:
 
 jobs:
@@ -16,13 +16,44 @@ jobs:
       - name: Install jq
         run: sudo apt-get install -y jq
 
-      - name: Fetch and parse issues into enriched JSON
+      - name: Fetch issues from GitHub
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p docs
-
-          echo "Fetching issues from GitHub..."
           curl -s -H "Authorization: token $GH_TOKEN" \
                -H "Accept: application/vnd.github+json" \
-               "https://api.g
+               "https://api.github.com/repos/Investec-Developer-Community/.github/issues?labels=New%20Community%20Build&state=open&per_page=100" \
+               > raw_issues.json
+
+      - name: Parse and enrich issues
+        run: |
+          cat << 'EOF' > enrich.jq
+          map({
+            title: .title,
+            url: .html_url,
+            created_at: .created_at,
+            submitter: .user.login,
+            body: .body,
+            projectName: (.body | capture("(?s)### Project Name\\s+(?<val>.*?)\\r?\\n")?.val // .title),
+            author: (.body | capture("(?s)### Your Name or Team\\s+(?<val>.*?)\\r?\\n")?.val // .user.login),
+            repoLink: (.body | capture("(?s)### Repository/Code Link\\s+(?<val>https?://\\S+)")?.val),
+            liveDemo: (.body | capture("(?s)### Live Demo.*?\\s+(?<val>https?://\\S+)")?.val),
+            description: (.body | capture("(?s)### Description\\s+(?<val>.*?)\\n###")?.val),
+            instructions: (.body | capture("(?s)### How to Run/Use It\\s+(?<val>.*?)\\n###")?.val),
+            screenshots: (
+              (.body | capture("(?s)### Screenshots or GIFs\\s+(?<val>.*?)\\n###")?.val // "")
+              | scan("https?://\\S+\\.(png|jpg|jpeg|gif)")
+            )
+          })
+          EOF
+
+          jq -f enrich.jq raw_issues.json > docs/builds.json
+
+      - name: Commit builds.json
+        run: |
+          git config user.name "Investec Bot"
+          git config user.email "bot@investec.com"
+          git add docs/builds.json
+          git diff --cached --quiet || git commit -m "Update enriched community builds JSON"
+          git push
