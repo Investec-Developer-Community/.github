@@ -13,14 +13,23 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Fetch issues via GitHub API
+      - name: Fetch full issues and save as JSON
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          mkdir -p docs
+          echo '[' > docs/builds.json
           curl -s -H "Authorization: token $GH_TOKEN" \
                -H "Accept: application/vnd.github+json" \
                "https://api.github.com/repos/Investec-Developer-Community/.github/issues?labels=New%20Community%20Build&state=open&per_page=100" \
-               > docs/builds.json
+          | jq -c '.[] | {
+                title: .title,
+                html_url: .html_url,
+                user: { login: .user.login },
+                body: .body,
+                created_at: .created_at
+              }' | sed '$!s/$/,/' >> docs/builds.json
+          echo ']' >> docs/builds.json
 
       - name: Commit builds.json
         run: |
