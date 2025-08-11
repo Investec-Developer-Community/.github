@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Investec Developer Community Builds</title>
+  <style>
+    body { font-family: sans-serif; max-width: 900px; margin: 40px auto; line-height: 1.6; background: #f9f9f9; }
+    .build-card {
+      background: white;
+      border: 1px solid #ddd;
+      border-left: 4px solid #005691;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    .build-card h2 { margin-top: 0; }
+    .build-card p { margin: 0.5em 0; }
+    .meta { font-size: 0.9em; color: #666; }
+    .loading { font-style: italic; }
+    a { color: #005691; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>🚀 Investec Community Builds</h1>
+  <p>These builds were submitted by our awesome developer community. Explore, learn, and reuse!</p>
+  <div id="builds"><p class="loading">Loading builds...</p></div>
+
+  <script>
+    const owner = "investec"; // Update if your org is different
+    const repo = "developer-builds"; // Update to your actual repo
+    const label = "New Community Build";
+
+    async function loadBuilds() {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(label)}&state=open`);
+      const issues = await res.json();
+      const container = document.getElementById("builds");
+      container.innerHTML = "";
+
+      if (!issues.length) {
+        container.innerHTML = "<p>No community builds yet. Be the first!</p>";
+        return;
+      }
+
+      issues.forEach(issue => {
+        const body = issue.body || "";
+        const getSection = (label) => {
+          const match = new RegExp(`### ${label}\\s+([\\s\\S]*?)(?=\\n###|$)`).exec(body);
+          return match ? match[1].trim() : "";
+        };
+
+        const description = getSection("Description");
+        const liveDemo = getSection("Live Demo");
+        const repoLink = getSection("Repository/Code Link");
+
+        const card = document.createElement("div");
+        card.className = "build-card";
+        card.innerHTML = `
+          <h2><a href="${issue.html_url}" target="_blank">${issue.title}</a></h2>
+          <p>${description.substring(0, 280)}...</p>
+          <p class="meta">👤 Submitted by <strong>${issue.user.login}</strong></p>
+          ${repoLink ? `<p>📦 <a href="${repoLink}" target="_blank">View Repository</a></p>` : ""}
+          ${liveDemo ? `<p>🚀 <a href="${liveDemo}" target="_blank">Live Demo</a></p>` : ""}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    loadBuilds();
+  </script>
+</body>
+</html>
