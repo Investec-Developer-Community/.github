@@ -1,11 +1,11 @@
 name: Export Community Builds
 
-permissions:
-  contents: write
-  
 on:
   issues:
     types: [labeled]
+
+permissions:
+  contents: write   # <-- Grant push permissions
 
 jobs:
   export:
@@ -17,7 +17,7 @@ jobs:
       - name: Export Issues to builds.json
         uses: peter-evans/issues-to-json@v2
         with:
-          labels-include: 'New Community Build,showcase'
+          labels-include: 'New Community Build'
           state: open
           output-file: './docs/builds.json'
 
