@@ -145,7 +145,7 @@
     let allIssues = [];
 
     const extractSection = (body, label) => {
-      const regex = new RegExp(`###\s*${label}\s*\n([\s\S]*?)(?=\n###|$)`, "i");
+      const regex = new RegExp(`###\s*${label}\s*\n+([\s\S]*?)(?=\n###|$)`, "i");
       const match = body.match(regex);
       return match ? match[1].trim() : "";
     };
@@ -173,9 +173,9 @@
         const liveDemo = extractSection(body, "Live Demo (if any)");
         const instructions = extractSection(body, "How to Run/Use It");
         const screenshots = extractSection(body, "Screenshots or GIFs");
-        const imageUrls = (screenshots.match(/https?:\/\/\S+\.(?:png|jpg|jpeg|gif)/gi) || []);
+        const imageUrls = (screenshots.match(/https?:\/\/\S+\.(png|jpg|jpeg|gif)/gi) || []);
         const createdAt = new Date(issue.created_at).toLocaleDateString();
-        const placeholderImage = 'https://via.placeholder.com/600x400?text=No+Screenshot+Provided';
+        const placeholderImage = 'https://placehold.co/600x400?text=No+Screenshot';
 
         const card = document.createElement("div");
         card.className = "build-card";
@@ -184,9 +184,11 @@
           <p><strong>Submitted by:</strong> ${author}</p>
           <p class="meta">🕒 Submitted on ${createdAt}</p>
           ${description ? `<p>${description}</p>` : "<p><em>No description provided.</em></p>"}
-          ${imageUrls.length ? `<div class="screenshots">${imageUrls.map(url => `<img src="${url}" alt="screenshot">`).join("")}</div>` : `<div class="screenshots"><img src="${placeholderImage}" alt="placeholder image"></div>`}
+          <div class="screenshots">
+            <img src="${imageUrls[0] || placeholderImage}" alt="Build Screenshot">
+          </div>
           ${repoLink ? `<p>📦 <a href="${repoLink}" target="_blank">View Repository</a></p>` : ""}
-          ${liveDemo ? `<p>🚀 <a href="${liveDemo}" target="_blank">Live Demo</a></p>` : ""}
+          ${liveDemo && liveDemo.toLowerCase() !== "no response" ? `<p>🚀 <a href="${liveDemo}" target="_blank">Live Demo</a></p>` : ""}
           ${instructions ? `<p><strong>How to Run:</strong><br><code>${instructions}</code><button class="copy-btn" onclick="copyToClipboard(\`${instructions}\`)">📋 Copy</button></p>` : ""}
           <p class="meta">📝 <a href="${issue.html_url}" target="_blank">View Submission</a></p>
         `;
