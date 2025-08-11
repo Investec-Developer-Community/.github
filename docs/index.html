@@ -2,34 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Investec Developer Community Builds</title>
+  <title>Investec Community Builds</title>
   <style>
-    body { font-family: sans-serif; max-width: 900px; margin: 40px auto; line-height: 1.6; background: #f9f9f9; }
-    .build-card {
-      background: white;
-      border: 1px solid #ddd;
-      border-left: 4px solid #005691;
-      padding: 16px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    body {
+      font-family: sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f9f9f9;
     }
-    .build-card h2 { margin-top: 0; }
-    .build-card p { margin: 0.5em 0; }
-    .meta { font-size: 0.9em; color: #666; }
-    .loading { font-style: italic; }
-    a { color: #005691; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 0.5em;
+    }
+    .build-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-left: 6px solid #005691;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .build-card h2 {
+      margin: 0 0 0.5em;
+    }
+    .build-card p {
+      margin: 0.3em 0;
+    }
+    .meta {
+      color: #666;
+      font-size: 0.9em;
+    }
+    a {
+      color: #005691;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .loading {
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
-  <h1>🚀 Investec Community Builds</h1>
-  <p>These builds were submitted by our awesome developer community. Explore, learn, and reuse!</p>
+  <h1>🚀 Investec Developer Community Builds</h1>
+  <p>Explore community-submitted projects. Built by devs, for devs.</p>
+
   <div id="builds"><p class="loading">Loading builds...</p></div>
 
   <script>
-    const owner = "investec"; // Update if your org is different
-    const repo = "developer-builds"; // Update to your actual repo
+    const owner = "investec"; // replace with your org if different
+    const repo = "developer-builds"; // replace with your repo name
     const label = "New Community Build";
 
     async function loadBuilds() {
@@ -45,23 +70,30 @@
 
       issues.forEach(issue => {
         const body = issue.body || "";
-        const getSection = (label) => {
-          const match = new RegExp(`### ${label}\\s+([\\s\\S]*?)(?=\\n###|$)`).exec(body);
+
+        const extractSection = (label) => {
+          const regex = new RegExp(`###\\s*${label}\\s*\\n([\\s\\S]*?)(?=\\n###|$)`, "i");
+          const match = body.match(regex);
           return match ? match[1].trim() : "";
         };
 
-        const description = getSection("Description");
-        const liveDemo = getSection("Live Demo");
-        const repoLink = getSection("Repository/Code Link");
+        const projectName = extractSection("Project Name") || issue.title;
+        const author = extractSection("Your Name or Team") || issue.user.login;
+        const description = extractSection("Description");
+        const repoLink = extractSection("Repository/Code Link");
+        const liveDemo = extractSection("Live Demo (if any)");
+        const instructions = extractSection("How to Run/Use It");
 
         const card = document.createElement("div");
         card.className = "build-card";
         card.innerHTML = `
-          <h2><a href="${issue.html_url}" target="_blank">${issue.title}</a></h2>
-          <p>${description.substring(0, 280)}...</p>
-          <p class="meta">👤 Submitted by <strong>${issue.user.login}</strong></p>
+          <h2>${projectName}</h2>
+          <p><strong>Submitted by:</strong> ${author}</p>
+          ${description ? `<p>${description}</p>` : ""}
           ${repoLink ? `<p>📦 <a href="${repoLink}" target="_blank">View Repository</a></p>` : ""}
           ${liveDemo ? `<p>🚀 <a href="${liveDemo}" target="_blank">Live Demo</a></p>` : ""}
+          ${instructions ? `<p><strong>How to Run:</strong><br><code>${instructions}</code></p>` : ""}
+          <p class="meta">📝 <a href="${issue.html_url}" target="_blank">View Submission</a></p>
         `;
         container.appendChild(card);
       });
