@@ -24,7 +24,7 @@
       gap: 10px;
     }
     .submit-button {
-      background: #005691;
+      background: #000;
       color: white;
       padding: 10px 14px;
       border-radius: 6px;
@@ -32,7 +32,7 @@
       text-decoration: none;
     }
     .submit-button:hover {
-      background: #00406e;
+      background: #333;
     }
     #search {
       padding: 8px;
@@ -56,13 +56,14 @@
     .build-card {
       background: #fff;
       border: 1px solid #ddd;
-      border-left: 6px solid #005691;
+      border-left: 6px solid #000;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     .build-card h2 {
       margin: 0 0 0.5em;
+      font-weight: bold;
     }
     .build-card p {
       margin: 0.5em 0;
@@ -87,7 +88,7 @@
       margin-left: 5px;
     }
     a {
-      color: #005691;
+      color: #000;
       text-decoration: none;
     }
     a:hover {
@@ -95,12 +96,28 @@
     }
     .loading {
       font-style: italic;
+      font-size: 1em;
+      padding: 20px;
+      text-align: center;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #000;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     .top-link {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: #005691;
+      background: #000;
       color: white;
       padding: 10px 14px;
       border-radius: 6px;
@@ -116,10 +133,13 @@
       Submit Your Build
     </a>
   </div>
+
+  <p>Welcome to our community showcase! Here you’ll find builds created by fellow Investec Developer community members — tools, dashboards, automations, and experiments made using our APIs or internal tech. Browse for inspiration, reuse cool ideas, or share your own.</p>
+
   <input id="search" type="text" placeholder="Search builds..." />
 
-  <div id="builds"><p class="loading">Loading builds...</p></div>
-  <a href="#" class="top-link">⬆️ Back to top</a>
+  <div id="builds"><div class="spinner"></div><p class="loading">Loading builds...</p></div>
+  <a href="#" class="top-link">↑</a>
 
   <script>
     let allIssues = [];
@@ -155,6 +175,7 @@
         const screenshots = extractSection(body, "Screenshots or GIFs");
         const imageUrls = (screenshots.match(/https?:\/\/\S+\.(?:png|jpg|jpeg|gif)/gi) || []);
         const createdAt = new Date(issue.created_at).toLocaleDateString();
+        const placeholderImage = 'https://via.placeholder.com/600x400?text=No+Screenshot+Provided';
 
         const card = document.createElement("div");
         card.className = "build-card";
@@ -162,11 +183,11 @@
           <h2>${projectName}</h2>
           <p><strong>Submitted by:</strong> ${author}</p>
           <p class="meta">🕒 Submitted on ${createdAt}</p>
-          ${description ? `<p>${description}</p>` : ""}
+          ${description ? `<p>${description}</p>` : "<p><em>No description provided.</em></p>"}
+          ${imageUrls.length ? `<div class="screenshots">${imageUrls.map(url => `<img src="${url}" alt="screenshot">`).join("")}</div>` : `<div class="screenshots"><img src="${placeholderImage}" alt="placeholder image"></div>`}
           ${repoLink ? `<p>📦 <a href="${repoLink}" target="_blank">View Repository</a></p>` : ""}
           ${liveDemo ? `<p>🚀 <a href="${liveDemo}" target="_blank">Live Demo</a></p>` : ""}
           ${instructions ? `<p><strong>How to Run:</strong><br><code>${instructions}</code><button class="copy-btn" onclick="copyToClipboard(\`${instructions}\`)">📋 Copy</button></p>` : ""}
-          ${imageUrls.length ? `<div class="screenshots">${imageUrls.map(url => `<img src="${url}" alt="screenshot">`).join("")}</div>` : ""}
           <p class="meta">📝 <a href="${issue.html_url}" target="_blank">View Submission</a></p>
         `;
         container.appendChild(card);
