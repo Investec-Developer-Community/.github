@@ -141,67 +141,69 @@
   <div id="builds"><div class="spinner"></div><p class="loading">Loading builds...</p></div>
   <a href="#" class="top-link">↑</a>
 
-  <script>
-    let allBuilds = [];
+<script>
+  let allBuilds = [];
 
-    const copyToClipboard = (text) => {
-      navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
-    };
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
+  };
 
-    const renderBuilds = (builds) => {
-      const container = document.getElementById("builds");
-      container.innerHTML = "";
+  const renderBuilds = (builds) => {
+    const container = document.getElementById("builds");
+    container.innerHTML = "";
 
-      if (!builds.length) {
-        container.innerHTML = "<p>No matching builds found.</p>";
-        return;
-      }
-
-      builds.forEach(build => {
-        const placeholderImage = 'https://placehold.co/600x400?text=No+Screenshot';
-        const createdAt = new Date(build.created_at).toLocaleDateString();
-
-        const card = document.createElement("div");
-        card.className = "build-card";
-        card.innerHTML = `
-          <h2>${build.projectName || build.title}</h2>
-          <p><strong>Submitted by:</strong> ${build.author || build.submitter}</p>
-          <p class="meta">🕒 Submitted on ${createdAt}</p>
-          ${build.description ? `<p>${build.description}</p>` : "<p><em>No description provided.</em></p>"}
-          <div class="screenshots">
-            <img src="${(build.screenshots && build.screenshots[0]) || placeholderImage}" alt="Build Screenshot">
-          </div>
-          ${build.repoLink ? `<p>📦 <a href="${build.repoLink}" target="_blank">View Repository</a></p>` : ""}
-          ${build.liveDemo ? `<p>🚀 <a href="${build.liveDemo}" target="_blank">Live Demo</a></p>` : ""}
-          ${build.instructions ? `<p><strong>How to Run:</strong><br><code>${build.instructions}</code><button class="copy-btn" onclick="copyToClipboard(\`${build.instructions}\`)">📋 Copy</button></p>` : ""}
-          <p class="meta">📝 <a href="${build.url}" target="_blank">View Submission</a></p>
-        `;
-        container.appendChild(card);
-      });
-    };
-
-    async function loadBuilds() {
-      try {
-        const res = await fetch("./builds.json");
-        if (!res.ok) throw new Error("Failed to load builds.json");
-        const data = await res.json();
-        allBuilds = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        renderBuilds(allBuilds);
-      } catch (err) {
-        document.getElementById("builds").innerHTML = `<p>⚠️ Error loading builds: ${err.message}</p>`;
-      }
+    if (!builds.length) {
+      container.innerHTML = "<p>No matching builds found.</p>";
+      return;
     }
 
-    document.getElementById("search").addEventListener("input", e => {
-      const q = e.target.value.toLowerCase();
-      const filtered = allBuilds.filter(build => {
-        return (
-          (build.projectName || build.title).toLowerCase().includes(q) ||
-          (build.description || "").toLowerCase().includes(q) ||
-          (build.author || build.submitter).toLowerCase().includes(q)
-        );
-      });
-      renderBuilds(filtered);
-    });
+    builds.forEach(build => {
+      const placeholderImage = 'https://placehold.co/600x400?text=No+Screenshot';
+      const createdAt = new Date(build.created_at).toLocaleDateString();
 
-    loadBuilds();
+      const card = document.createElement("div");
+      card.className = "build-card";
+      card.innerHTML = `
+        <h2>${build.projectName || build.title}</h2>
+        <p><strong>Submitted by:</strong> ${build.author || build.submitter}</p>
+        <p class="meta">🕒 Submitted on ${createdAt}</p>
+        ${build.description ? `<p>${build.description}</p>` : "<p><em>No description provided.</em></p>"}
+        <div class="screenshots">
+          <img src="${(build.screenshots && build.screenshots[0]) || placeholderImage}" alt="Build Screenshot">
+        </div>
+        ${build.repoLink ? `<p>📦 <a href="${build.repoLink}" target="_blank">View Repository</a></p>` : ""}
+        ${build.liveDemo ? `<p>🚀 <a href="${build.liveDemo}" target="_blank">Live Demo</a></p>` : ""}
+        ${build.instructions ? `<p><strong>How to Run:</strong><br><code>${build.instructions}</code><button class="copy-btn" onclick="copyToClipboard(\`${build.instructions}\`)">📋 Copy</button></p>` : ""}
+        <p class="meta">📝 <a href="${build.url}" target="_blank">View Submission</a></p>
+      `;
+      container.appendChild(card);
+    });
+  };
+
+  async function loadBuilds() {
+    try {
+      const res = await fetch("./builds.json");
+      if (!res.ok) throw new Error("Failed to load builds.json");
+      const data = await res.json();
+      allBuilds = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      renderBuilds(allBuilds);
+    } catch (err) {
+      document.getElementById("builds").innerHTML = `<p>⚠️ Error loading builds: ${err.message}</p>`;
+      console.error(err);
+    }
+  }
+
+  document.getElementById("search").addEventListener("input", e => {
+    const q = e.target.value.toLowerCase();
+    const filtered = allBuilds.filter(build => {
+      return (
+        (build.projectName || build.title).toLowerCase().includes(q) ||
+        (build.description || "").toLowerCase().includes(q) ||
+        (build.author || build.submitter).toLowerCase().includes(q)
+      );
+    });
+    renderBuilds(filtered);
+  });
+
+  loadBuilds();
+</script>
