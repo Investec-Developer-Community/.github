@@ -184,3 +184,24 @@
       try {
         const res = await fetch("./builds.json");
         if (!res.ok) throw new Error("Failed to load builds.json");
+        const data = await res.json();
+        allBuilds = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        renderBuilds(allBuilds);
+      } catch (err) {
+        document.getElementById("builds").innerHTML = `<p>⚠️ Error loading builds: ${err.message}</p>`;
+      }
+    }
+
+    document.getElementById("search").addEventListener("input", e => {
+      const q = e.target.value.toLowerCase();
+      const filtered = allBuilds.filter(build => {
+        return (
+          (build.projectName || build.title).toLowerCase().includes(q) ||
+          (build.description || "").toLowerCase().includes(q) ||
+          (build.author || build.submitter).toLowerCase().includes(q)
+        );
+      });
+      renderBuilds(filtered);
+    });
+
+    loadBuilds();
