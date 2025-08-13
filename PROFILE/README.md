@@ -1,9 +1,9 @@
 # Whois?
-We're a community of 2,500+ software devs on a mission. We want to make Open Banking a reality in South Africa: by building open source tech with [Investec Programmable Banking](https://www.investec.com/en_za/banking/programmable-banking.html). We meet up every month to share what we learn.
+We're a community of 2,500+ software devs on a mission. We want to make Open Banking a reality in South Africa: by building open-source tech with [Investec Programmable Banking](https://www.investec.com/en_za/banking/programmable-banking.html). We meet up every month to share what we learn.
 
 # Find out more about Programmable Banking
 
-To find out more, check out these links, or get in touch by emailing the Investec community team at [developercommunity@investec.co.za](developercommunity@investec.co.za)
+To find out more, check out these links, or get in touch by emailing the Investec community team at [developer.community@investec.com](developer.community@investec.com)
 
 ## NB Community Links  :tent:
 
@@ -14,3 +14,4 @@ To find out more, check out these links, or get in touch by emailing the Investe
 - [Community Champions Programme](https://investec.gitbook.io/programmable-banking-community-wiki/community/community-champions)
 - [Raise a production issue](https://github.com/Investec-Developer-Community/.github/issues)
 - [Feature Requests and Discussions](https://github.com/orgs/Investec-Developer-Community/discussions)
+- 🦄 Share your awesome build with the community via this [Submission Form](https://github.com/Investec-Developer-Community/Community-Projects/issues/new?template=build-submission.yml)
