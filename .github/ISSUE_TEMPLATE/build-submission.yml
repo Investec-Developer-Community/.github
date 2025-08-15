@@ -7,9 +7,9 @@ body:
   - type: markdown
     attributes:
       value: |
-      Thanks for sharing your build! Please fill in the details below so we can add it to the community showcase.
-      
-      💝 **First-time submitter?** When you share your first build, we’ll send you **exclusive Investec Developer swag** 🎁 as a thank-you for your time, effort, and for sharing your work with the community.
+        Thanks for sharing your build! Please fill in the details below so we can add it to the community showcase.
+
+        💝 **First-time submitter?** When you share your first build, we’ll send you some **exclusive Investec Developer swag** 🎁 as a thank-you for your time, effort, and for sharing your work with the community.
   - type: input
     id: project_name
     attributes:
