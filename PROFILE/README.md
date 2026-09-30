@@ -15,3 +15,4 @@ To find out more, check out these links, or get in touch by emailing the Investe
 - [Feature Requests and Discussions](https://github.com/orgs/Investec-Developer-Community/discussions)
 - [Community Champions Programme](https://investec.gitbook.io/programmable-banking-community-wiki/community/community-champions)
 - 🦄 [Community Open-source projects](https://github.com/Investec-Developer-Community/Community-Projects)
+- 🕹️ [Debug APIs & Card code to win some swag](https://github.com/Investec-Developer-Community/investec-dev-quest)
